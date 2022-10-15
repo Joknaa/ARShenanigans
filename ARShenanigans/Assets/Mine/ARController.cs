@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 public class ARController : MonoBehaviour {
@@ -9,6 +10,8 @@ public class ARController : MonoBehaviour {
     public GameObject myObject;
     public ARRaycastManager raycastManager;
 
+    private List<GameObject> spawnedObjects = new List<GameObject>();
+    
     private void Update() {
         if (Input.touchCount <= 0) return;
         
@@ -20,6 +23,24 @@ public class ARController : MonoBehaviour {
         if (touches.Count <= 0) return;
         
         var hitPose = touches[0].pose;
-        Instantiate(myObject, hitPose.position, hitPose.rotation);
+        spawnedObjects.Add(Instantiate(myObject, hitPose.position, Quaternion.identity));
     }
+    
+    
+    public void ClearObjects() {
+        foreach (var obj in spawnedObjects) {
+            Destroy(obj);
+        }
+        spawnedObjects.Clear();
+    }
+    
+    public void SetObjectsSize(Slider slider) {
+        foreach (var obj in spawnedObjects) {
+            obj.transform.localScale = Vector3.one * slider.value;
+        }
+        
+        myObject.transform.localScale = Vector3.one * slider.value;
+    }
+    
+    
 }
